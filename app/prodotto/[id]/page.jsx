@@ -36,13 +36,17 @@ export default async function ProductPage({ params }) {
     notFound();
   }
 
+  const whatsappUrl = `https://wa.me/393348069639?text=${encodeURIComponent(
+    `Buongiorno, vorrei informazioni sul prodotto ${product.id} - ${product.title}`
+  )}`;
+
   return (
     <main className="min-h-screen bg-stone-50 text-stone-950">
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-2">
         <ProductGallery product={product} />
 
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
               {product.area} · {product.period}
             </p>
@@ -81,16 +85,14 @@ export default async function ProductPage({ params }) {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             {product.available ? (
-              <Link
-                href={`https://wa.me/393348069639?text=${encodeURIComponent(
-                  `Buongiorno, vorrei informazioni sul prodotto ${product.id} - ${product.title}`
-                )}`}
+              <a
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white"
               >
                 Richiedi su WhatsApp
-              </Link>
+              </a>
             ) : (
               <div className="rounded-full bg-stone-300 px-7 py-3 text-center font-medium text-stone-600">
                 Prodotto venduto
