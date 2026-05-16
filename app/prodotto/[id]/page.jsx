@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { products } from "../../../data/products";
 import ProductGallery from "./ProductGallery";
@@ -91,12 +92,12 @@ export default async function ProductPage({ params }) {
           </div>
           )}
 
-          <a
+          <Link
             href="/#nuovi-arrivi"
             className="rounded-full border border-stone-300 bg-white px-7 py-3 text-center font-medium"
           >
             Torna al catalogo
-          </a>
+        </Link>
 
         </div>
         </div>
