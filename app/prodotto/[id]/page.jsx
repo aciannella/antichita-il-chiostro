@@ -93,7 +93,7 @@ export default async function ProductPage({ params }) {
           )}
 
           <Link
-            href="/#nuovi-arrivi"
+            href="/"
             className="rounded-full border border-stone-300 bg-white px-7 py-3 text-center font-medium"
           >
             Torna al catalogo
