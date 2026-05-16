@@ -42,9 +42,15 @@ export default async function ProductPage({ params }) {
         <ProductGallery product={product} />
 
         <div>
-          <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
-            {product.area} · {product.period}
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
+              {product.area} · {product.period}
+            </p>
+
+            <span className="rounded-full bg-stone-950 px-3 py-1 text-xs font-semibold text-white">
+              {product.label}
+            </span>
+          </div>
 
           <h1 className="mt-4 text-4xl font-semibold md:text-5xl">
             {product.title}
@@ -74,32 +80,30 @@ export default async function ProductPage({ params }) {
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-
             {product.available ? (
               <Link
-              href={`https://wa.me/393348069639?text=${encodeURIComponent(
+                href={`https://wa.me/393348069639?text=${encodeURIComponent(
                   `Buongiorno, vorrei informazioni sul prodotto ${product.id} - ${product.title}`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white"
               >
                 Richiedi su WhatsApp
               </Link>
-          ) : (
-            <div className="rounded-full bg-stone-300 px-7 py-3 text-center font-medium text-stone-600">
-              Prodotto venduto
+            ) : (
+              <div className="rounded-full bg-stone-300 px-7 py-3 text-center font-medium text-stone-600">
+                Prodotto venduto
+              </div>
+            )}
+
+            <Link
+              href="/#nuovi-arrivi"
+              className="rounded-full border border-stone-300 bg-white px-7 py-3 text-center font-medium"
+            >
+              Torna al catalogo
+            </Link>
           </div>
-          )}
-
-          <Link
-            href="/"
-            className="rounded-full border border-stone-300 bg-white px-7 py-3 text-center font-medium"
-          >
-            Torna al catalogo
-        </Link>
-
-        </div>
         </div>
       </section>
     </main>
