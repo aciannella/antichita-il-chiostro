@@ -76,7 +76,7 @@ export default async function ProductPage({ params }) {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
             {product.available ? (
-              <a
+              <Link
               href={`https://wa.me/393348069639?text=${encodeURIComponent(
                   `Buongiorno, vorrei informazioni sul prodotto ${product.id} - ${product.title}`
               )}`}
@@ -85,7 +85,7 @@ export default async function ProductPage({ params }) {
               className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white"
               >
                 Richiedi su WhatsApp
-              </a>
+              </Link>
           ) : (
             <div className="rounded-full bg-stone-300 px-7 py-3 text-center font-medium text-stone-600">
               Prodotto venduto
