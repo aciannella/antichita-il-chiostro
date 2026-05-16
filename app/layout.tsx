@@ -18,7 +18,11 @@ export const metadata = {
     "Antiquariato, modernariato, arte, illuminazione e oggetti selezionati.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="it"
@@ -29,4 +33,5 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
+}
 }
