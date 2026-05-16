@@ -4,32 +4,31 @@ import { products } from "../../../data/products";
 import ProductGallery from "./ProductGallery";
 
 function getProduct(id) {
-  return products.find((p) => p.id.toLowerCase() === id.toLowerCase());
+  return products.find(
+    (p) => p.id.toLowerCase() === id.toLowerCase()
+  );
 }
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
+
   const product = getProduct(id);
 
   if (!product) {
     return {
-      title: "Prodotto non trovato | Antichità il Chiostro",
+      title: "Prodotto non trovato",
     };
   }
 
   return {
     title: `${product.title} | Antichità il Chiostro`,
     description: product.description,
-    openGraph: {
-      title: product.title,
-      description: product.description,
-      images: [product.images[0]],
-    },
   };
 }
 
 export default async function ProductPage({ params }) {
   const { id } = await params;
+
   const product = getProduct(id);
 
   if (!product) {
@@ -43,9 +42,11 @@ export default async function ProductPage({ params }) {
   return (
     <main className="min-h-screen bg-stone-50 text-stone-950">
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-2">
+
         <ProductGallery product={product} />
 
         <div>
+
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
               {product.area} · {product.period}
@@ -69,30 +70,36 @@ export default async function ProductPage({ params }) {
           </p>
 
           <div className="mt-8 grid gap-4 rounded-3xl border border-stone-200 bg-white p-6">
+
             <div>
               <strong>Categoria:</strong> {product.category}
             </div>
+
             <div>
               <strong>Materiali:</strong> {product.material}
             </div>
+
             <div>
               <strong>Dimensioni:</strong> {product.dimensions}
             </div>
+
             <div>
               <strong>Stato:</strong> {product.condition}
             </div>
+
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
             {product.available ? (
-              <a
+              <Link
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white"
               >
                 Richiedi su WhatsApp
-              </a>
+              </Link>
             ) : (
               <div className="rounded-full bg-stone-300 px-7 py-3 text-center font-medium text-stone-600">
                 Prodotto venduto
@@ -105,8 +112,11 @@ export default async function ProductPage({ params }) {
             >
               Torna al catalogo
             </Link>
+
           </div>
+
         </div>
+
       </section>
     </main>
   );
