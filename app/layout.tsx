@@ -1,6 +1,7 @@
 import "./globals.css";
 
 import { Playfair_Display, Inter } from "next/font/google";
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../lib/seo";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -13,9 +14,41 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Antichità il Chiostro",
-  description:
-    "Antiquariato, modernariato, arte, illuminazione e oggetti selezionati.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: absoluteUrl("/"),
+  },
+  openGraph: {
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: absoluteUrl("/"),
+    siteName: SITE_NAME,
+    locale: "it_IT",
+    type: "website",
+    images: [
+      {
+        url: absoluteUrl("/d798ff87-db9f-400d-8e92-897ebfeb6713.png"),
+        width: 1138,
+        height: 1414,
+        alt: "Interno antiquario con arredi, dipinti, illuminazione e oggetti d'epoca",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [absoluteUrl("/d798ff87-db9f-400d-8e92-897ebfeb6713.png")],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

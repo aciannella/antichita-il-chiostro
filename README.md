@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Antichità Il Chiostro
 
-## Getting Started
+Sito catalogo per Antichità Il Chiostro: antiquariato, modernariato, arte,
+illuminazione, libri antichi, strumenti musicali, vintage, corredi e
+contovendita.
 
-First, run the development server:
+## Funzioni principali
+
+- Homepage con sezioni catalogo e ultimi arrivi.
+- Catalogo filtrabile per sezione, disponibilita, ricerca e ordinamento.
+- Schede prodotto con galleria, dettagli, prezzo e richiesta WhatsApp.
+- Pannello admin protetto da password per inserire, modificare e cancellare prodotti.
+- SEO tecnica con metadata, canonical, Open Graph, JSON-LD, robots e sitemap.
+- Pagina privacy essenziale.
+
+## Avvio locale
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aprire:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Sito: `http://localhost:3000`
+- Admin: `http://localhost:3000/admin`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Variabili ambiente
 
-## Learn More
+Copiare `.env.example` in `.env.local` e compilare i valori:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+ADMIN_PASSWORD=
+NEXT_PUBLIC_SITE_URL=https://antichitailchiostro.it
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`ADMIN_PASSWORD` abilita la protezione del pannello admin.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Verifiche
 
-## Deploy on Vercel
+```bash
+npm run lint
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Pubblicazione
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Il deploy consigliato e su Vercel con dominio `antichitailchiostro.it`.
+Le istruzioni operative sono in `DEPLOYMENT.md`.

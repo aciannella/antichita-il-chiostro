@@ -1,458 +1,447 @@
-"use client";
+import { supabase } from "../lib/supabase";
+import { PRODUCT_AREAS } from "../lib/productOptions";
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from "../lib/seo";
+import ProductCatalog from "./ProductCatalog";
 
-import React, { useMemo, useState } from "react";
-import { products } from "../data/products";
+export const dynamic = "force-dynamic";
 
 const CONTACT = {
-  brand: "Antichità il Chiostro",
+  brand: "Antichità Il Chiostro",
   tagline: "Antiquariato · Modernariato · Arte · Contovendita",
   email: "info@antichitailchiostro.it",
-  phone: "Contatto WhatsApp",
+  phone: "WhatsApp: 334 806 9639",
   location: "Italia",
-};
-
-const Icon = ({ name }) => {
-  const icons = {
-    search: "⌕",
-    heart: "♡",
-    spark: "✦",
-    check: "✓",
-    chevron: "›",
-    phone: "☎",
-    mail: "✉",
-    pin: "⌖",
-  };
-
-  return <span aria-hidden="true">{icons[name] || "✦"}</span>;
 };
 
 const areas = [
   {
     title: "Antiquariato",
     text: "Mobili, dipinti, oggetti e arredi storici selezionati.",
-    image:
-      "https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=1200&auto=format&fit=crop",
+    image: "/d798ff87-db9f-400d-8e92-897ebfeb6713.png",
   },
   {
     title: "Modernariato",
     text: "Design italiano, arredi anni '50-'80 e pezzi iconici.",
-    image:
-      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+    image: "/ChatGPT Image 20 mag 2026, 00_26_05.png",
   },
   {
     title: "Illuminazione",
     text: "Lampade, applique, lampadari e candelieri restaurati.",
-    image:
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=1200&auto=format&fit=crop",
+    image: "/ChatGPT Image 20 mag 2026, 00_28_26.png",
   },
   {
     title: "Arte",
-    text: "Dipinti, grafiche, sculture e opere contemporanee.",
-    image:
-      "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?q=80&w=1200&auto=format&fit=crop",
+    text: "Dipinti, grafiche, sculture, opere decorative e contemporanee.",
+    image: "/ChatGPT Image 20 mag 2026, 00_36_02.png",
   },
   {
     title: "Libreria",
-    text: "Libri antichi, rari, prime edizioni e cataloghi d'arte.",
-    image:
-      "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=1200&auto=format&fit=crop",
+    text: "Libri antichi, rari, prime edizioni, cataloghi d'arte e volumi da collezione.",
+    image: "/ChatGPT Image 20 mag 2026, 00_41_58.png",
   },
   {
     title: "Vintage & Corredi",
-    text: "Tessili, accessori e oggetti di stile.",
-    image:
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1200&auto=format&fit=crop",
+    text: "Abbigliamento, tessili, corredi, accessori e oggetti di stile.",
+    image: "/ChatGPT Image 20 mag 2026, 00_32_28.png",
+  },
+  {
+    title: "Strumenti Musicali WiFi",
+    text: "Strumenti antichi, vintage e soluzioni sonore dal fascino senza tempo.",
+    image: "/ChatGPT Image 20 mag 2026, 00_46_12.png",
+  },
+  {
+    title: "Vetrina Contovendita",
+    text: "Una selezione curata di mobili, quadri, lampadari e oggetti d'arte affidati alla nostra vetrina.",
+    image: "/ChatGPT Image 20 mag 2026, 08_07_11.png",
   },
 ];
 
+export default async function AntichitaIlChiostro() {
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-const services = [
-  "Acquisto diretto",
-  "Contovendita",
-  "Restauro",
-  "Sgomberi selettivi",
-  "Perizie e stime",
-];
+  if (error) {
+    console.error(error);
+  }
 
-function filterProducts(productList, selectedArea, searchText) {
-  return productList.filter((p) => {
-    const matchesArea = selectedArea === "Tutte" || p.area === selectedArea;
-    const haystack = `${p.title} ${p.area} ${p.category} ${p.period}`.toLowerCase();
-    const matchesText = haystack.includes(searchText.trim().toLowerCase());
-    return matchesArea && matchesText;
-  });
-}
-
-export default function AntichitaIlChiostro() {
-  const [query, setQuery] = useState("");
-  const [area, setArea] = useState("Tutte");
-
-  const filtered = useMemo(
-    () => filterProducts(products, area, query),
-    [query, area]
-  );
+  const safeProducts = products || [];
+  const availableCount = safeProducts.filter(
+    (product) => product.available !== false
+  ).length;
+  const representedAreas = new Set(
+    safeProducts.map((product) => product.area).filter(Boolean)
+  ).size;
+  const latestProducts = safeProducts.slice(0, 3);
+  const homeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: absoluteUrl("/"),
+    image: absoluteUrl("/d798ff87-db9f-400d-8e92-897ebfeb6713.png"),
+    email: CONTACT.email,
+    telephone: CONTACT.phone.replace("WhatsApp: ", ""),
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "IT",
+    },
+    makesOffer: areas.map((item) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: item.title,
+        description: item.text,
+      },
+    })),
+  };
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-950">
-      <header className="sticky top-0 z-50 border-b border-stone-200 bg-stone-50/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
-          <a href="#top" className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-full bg-stone-950 text-lg font-semibold text-white">
+    <div className="antique-page-bg min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homeJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <header className="sticky top-0 z-50 border-b border-stone-300/70 bg-[#f3eadc]/95 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <a href="#top" className="flex items-center justify-center gap-3 text-center lg:text-left">
+            <div className="grid h-11 w-11 place-items-center rounded-full bg-[#2a1810] text-lg font-semibold text-[#f8efe1]">
               C
             </div>
             <div>
-              <div className="text-xl font-semibold tracking-tight">
+              <div className="text-lg font-semibold tracking-tight text-[#2a1810] sm:text-xl">
                 {CONTACT.brand}
               </div>
-              <div className="text-xs uppercase tracking-[0.22em] text-stone-500">
+              <div className="text-[0.68rem] uppercase tracking-[0.16em] text-[#806c59] sm:text-xs sm:tracking-[0.22em]">
                 {CONTACT.tagline}
               </div>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-7 text-sm font-medium lg:flex">
-            <a href="#aree" className="hover:text-amber-800">Aree</a>
-            <a href="#nuovi-arrivi" className="hover:text-amber-800">Prodotti</a>
-            <a href="#servizi" className="hover:text-amber-800">Servizi</a>
-            <a href="#contovendita" className="hover:text-amber-800">Contovendita</a>
-            <a href="#contatti" className="hover:text-amber-800">Contatti</a>
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-[#4b3326]">
+            <a href="#aree" className="hover:text-[#8a5527]">
+              Sezioni
+            </a>
+            <a href="#nuovi-arrivi" className="hover:text-[#8a5527]">
+              Collezioni
+            </a>
+            <a href="#contatti" className="hover:text-[#8a5527]">
+              Contatti
+            </a>
           </nav>
-
-          <a
-            href="#contatti"
-            className="hidden rounded-full border border-stone-300 px-5 py-2 text-sm font-semibold md:inline-flex"
-          >
-            Valuta un oggetto
-          </a>
         </div>
       </header>
 
       <main id="top">
         <section className="relative overflow-hidden border-b border-stone-200">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(180,132,78,0.28),transparent_32%),radial-gradient(circle_at_82%_20%,rgba(255,255,255,0.95),transparent_30%)]" />
-
-          <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
-            <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-800/20 bg-white/80 px-4 py-2 text-sm text-amber-900 shadow-sm">
-                <Icon name="spark" /> Selezione, restauro e vendita assistita
+          <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-2 lg:py-24">
+            <div className="flex flex-col items-center text-center lg:justify-center">
+              <div className="mb-5 inline-flex rounded-lg border border-[#b88955]/30 bg-[#fffaf0]/80 px-4 py-2 text-sm text-[#7b4b22] shadow-sm">
+                Selezione, restauro e vendita assistita
               </div>
 
-              <h1 className="max-w-3xl text-5xl font-semibold tracking-tight md:text-7xl">
-                Antichità, arte e modernariato selezionati per spazi senza tempo.
+              <h1 className="max-w-3xl text-balance text-4xl font-semibold tracking-tight text-[#2a1810] sm:text-5xl md:text-6xl xl:text-[4.25rem]">
+                Antiquariato, arte e modernariato accuratamente selezionati per
+                creare ambienti di raffinata eleganza senza tempo.
               </h1>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-600">
-                {CONTACT.brand} seleziona arredi, opere, libri rari,
-                illuminazione e oggetti d’epoca per abitazioni, studi
-                professionali, hotel e collezionisti. Ogni pezzo viene
-                valorizzato attraverso immagini curate, descrizioni accurate e
-                una narrazione capace di restituirne storia, materia e carattere.
+              <p className="mt-6 max-w-2xl text-justify text-base leading-8 text-[#5f4a3b] md:text-lg">
+                Antichità Il Chiostro, in collaborazione con Architetti e
+                Designer, cura un’esclusiva selezione di arredi, opere d’arte,
+                libri rari, illuminazione e oggetti d’epoca, pensati per
+                valorizzare abitazioni di pregio, studi professionali, hotel e
+                collezioni private, creando ambienti di raffinata eleganza senza
+                tempo.
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <a
                   href="#nuovi-arrivi"
-                  className="rounded-full bg-stone-950 px-7 py-3 text-center font-medium text-white shadow-lg shadow-stone-300"
+                  className="rounded-lg bg-[#3a2116] px-7 py-3 text-center font-medium text-[#fff8ee] hover:bg-[#5a3520]"
                 >
                   Esplora il catalogo
                 </a>
                 <a
-                  href="#contovendita"
-                  className="rounded-full border border-stone-300 bg-white px-7 py-3 text-center font-medium"
+                  href="#contatti"
+                  className="rounded-lg border border-[#cbb99d] bg-[#fffaf0] px-7 py-3 text-center font-medium text-[#4b3326] hover:border-[#8a5527]"
                 >
-                  Vendi con noi
+                  Contattaci
                 </a>
               </div>
 
-              <div className="mt-9 grid gap-3 text-sm text-stone-600 sm:grid-cols-3">
-                <span><Icon name="check" /> Pezzi selezionati</span>
-                <span><Icon name="check" /> Schede descrittive</span>
-                <span><Icon name="check" /> Contovendita curato</span>
+              <div className="mt-10 grid w-full max-w-2xl grid-cols-3 gap-3 border-y border-[#d6c7ad] py-5">
+                <div>
+                  <div className="text-xl font-semibold text-[#2a1810] sm:text-2xl">
+                    {safeProducts.length}
+                  </div>
+                  <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[#806c59] sm:text-xs sm:tracking-[0.18em]">
+                    articoli
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl font-semibold text-[#2a1810] sm:text-2xl">
+                    {availableCount}
+                  </div>
+                  <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[#806c59] sm:text-xs sm:tracking-[0.18em]">
+                    disponibili
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl font-semibold text-[#2a1810] sm:text-2xl">
+                    {representedAreas}
+                  </div>
+                  <div className="text-[0.68rem] uppercase tracking-[0.14em] text-[#806c59] sm:text-xs sm:tracking-[0.18em]">
+                    sezioni
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl">
+            <div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-stone-950 shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1600&auto=format&fit=crop"
-                  alt="Interno elegante con arredi d'epoca"
-                  className="h-full w-full object-cover"
+                  src="/d798ff87-db9f-400d-8e92-897ebfeb6713.png"
+                  alt="Stanza antiquaria con mobili, quadri, statue, libri e lampade"
+                  className="h-full w-full object-contain"
                 />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                  <div className="text-sm uppercase tracking-[0.25em] text-stone-200">
-                    selezione esclusiva
-                  </div>
-                  <div className="mt-2 text-3xl font-semibold">
-                    Arredi e oggetti con una storia autentica
-                  </div>
+              </div>
+              <div className="mt-4 rounded-lg border border-[#d6c7ad] bg-[#fffaf0] p-5 text-center shadow-sm">
+                <div className="text-sm uppercase tracking-[0.25em] text-[#8a5527]">
+                  selezione esclusiva
+                </div>
+                <div className="mt-2 text-xl font-semibold text-[#2a1810] sm:text-2xl">
+                  Mobili, dipinti, lampade e oggetti selezionati per il loro
+                  fascino autentico e la storia che custodiscono.
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="aree" className="mx-auto max-w-7xl px-5 py-16">
-          <div className="mb-8 flex items-end justify-between gap-5">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
-                categorie principali
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
-                Le sezioni del catalogo
-              </h2>
+        {latestProducts.length > 0 && (
+          <section className="border-b border-stone-200 bg-stone-950 text-white">
+            <div className="mx-auto grid max-w-7xl gap-5 px-5 py-7 lg:grid-cols-[220px_1fr] lg:items-center">
+              <div>
+                <h2 className="text-2xl font-semibold">
+                  Ultimi arrivi
+                </h2>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {latestProducts.map((product) => (
+                  <a
+                    key={product.id}
+                    href={`/prodotto/${product.code}`}
+                    className="grid grid-cols-[72px_1fr] gap-3 rounded-lg border border-white/10 bg-white/5 p-3 hover:bg-white/10"
+                  >
+                    <div className="aspect-square overflow-hidden rounded-md bg-white/10">
+                      {product.images?.[0] && (
+                        <img
+                          src={product.images[0]}
+                          alt={product.title}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium">{product.title}</div>
+                      <div className="mt-1 text-sm text-stone-300">
+                        {product.area || "Catalogo"}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
+          </section>
+        )}
+
+        <section id="aree" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-16">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#8a5527]">
+              percorsi di ricerca
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-[#2a1810] md:text-4xl">
+              Le sezioni del catalogo
+            </h2>
+            <p className="mt-4 text-base leading-7 text-[#5f4a3b]">
+              Ogni categoria raccoglie pezzi scelti per materia, storia e
+              possibilità progettuale, con uno sguardo attento agli interni di
+              pregio.
+            </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {areas.map((item) => (
               <article
                 key={item.title}
-                className="group overflow-hidden rounded-[1.7rem] border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                className="group overflow-hidden rounded-lg border border-[#d6c7ad] bg-[#fffaf0] shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
-                <div className="aspect-[5/3] overflow-hidden">
+                <div className="relative aspect-[5/3] overflow-hidden bg-[#2a1810]">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className={`h-full w-full ${
+                      item.title === "Antiquariato"
+                        ? "object-contain"
+                        : "object-cover sepia-[0.18] saturate-[0.9] transition duration-700 group-hover:scale-105"
+                    } opacity-95`}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2a1810]/55 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3 rounded-md border border-white/15 bg-[#2a1810]/75 px-3 py-1 text-xs uppercase tracking-[0.18em] text-[#f8efe1]">
+                    {item.title}
+                  </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-semibold">{item.title}</h3>
-                  <p className="mt-2 leading-7 text-stone-600">{item.text}</p>
+                <div className="p-6 text-center">
+                  <h3 className="text-2xl font-semibold text-[#2a1810]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 leading-7 text-[#5f4a3b]">{item.text}</p>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section id="nuovi-arrivi" className="bg-white py-16">
+        <section id="nuovi-arrivi" className="scroll-mt-24 bg-[#fbf7ef]/85 py-16">
           <div className="mx-auto max-w-7xl px-5">
             <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#8a5527]">
                   catalogo online
                 </p>
-                <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
-                  Prodotti in evidenza
+                <h2 className="mt-2 text-3xl font-semibold text-[#2a1810] md:text-4xl">
+                  Collezioni in evidenza
                 </h2>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Cerca nel catalogo..."
-                  className="w-full rounded-full border border-stone-300 bg-white px-5 py-3 outline-none focus:border-stone-900 sm:w-80"
-                />
+            </div>
 
-                <select
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  className="rounded-full border border-stone-300 bg-white px-5 py-3"
+            {error ? (
+              <div className="rounded-3xl border border-amber-200 bg-amber-50 p-8 text-amber-900">
+                Catalogo temporaneamente non disponibile.
+              </div>
+            ) : (
+              <ProductCatalog products={safeProducts} areas={PRODUCT_AREAS} />
+            )}
+          </div>
+        </section>
+
+        <section id="contatti" className="scroll-mt-24 bg-[#e7dccb]/85 py-16">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="text-center">
+              <p className="text-sm uppercase tracking-[0.25em] text-[#8a5527]">
+                contatti
+              </p>
+              <h2 className="mt-2 text-3xl font-semibold text-[#2a1810] md:text-5xl">
+                Hai un oggetto da vendere o vuoi una consulenza?
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#5f4a3b]">
+                Raccontaci cosa desideri valorizzare: selezioniamo arredi,
+                opere, illuminazione, libri, oggetti d&apos;arte e collezioni private
+                con un approccio riservato e professionale.
+              </p>
+
+              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <a
+                  href="https://wa.me/393348069639"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-[#3a2116] px-7 py-3 text-center font-medium text-[#fff8ee] hover:bg-[#5a3520]"
                 >
-                  <option>Tutte</option>
-                  {areas.map((a) => (
-                    <option key={a.title}>{a.title}</option>
-                  ))}
-                </select>
+                  Scrivici su WhatsApp
+                </a>
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="rounded-lg border border-[#cbb99d] bg-[#fffaf0] px-7 py-3 text-center font-medium text-[#4b3326] hover:border-[#8a5527]"
+                >
+                  Invia un&apos;email
+                </a>
               </div>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((p) => (
+            <div className="grid gap-5 md:grid-cols-2">
+              {[
+                {
+                  title: "Valutazioni",
+                  text: "Invia fotografie, misure, materiali, stato di conservazione e provenienza, se conosciuta.",
+                },
+                {
+                  title: "Contovendita",
+                  text: "Valorizziamo oggetti selezionati con presentazione curata, trattativa e vetrina online.",
+                },
+                {
+                  title: "Interior",
+                  text: "Collaboriamo con Architetti e Designer per progetti residenziali, hospitality e studi professionali.",
+                },
+                {
+                  title: "Collezioni",
+                  text: "Seguiamo collezioni private e nuclei di arredo con attenzione a coerenza, epoca e atmosfera.",
+                },
+              ].map((item) => (
                 <article
-                  key={p.id}
-                  className="group overflow-hidden rounded-[1.5rem] border border-stone-200 bg-stone-50 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  key={item.title}
+                  className="rounded-lg border border-[#d6c7ad] bg-[#fffaf0] p-6 text-center shadow-sm"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-stone-200">
-                    <img
-                      src={p.images[0]}
-                      alt={p.title}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-stone-900 shadow-sm">
-                      {p.label}
-                    </div>
-                  </div>
-
-                  <div className="p-5">
-                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.18em] text-stone-500">
-                      <span>{p.area}</span>
-                      <span>{p.period}</span>
-                    </div>
-
-                    <h3 className="min-h-14 text-lg font-semibold leading-snug">
-                      {p.title}
-                    </h3>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="text-2xl font-semibold">
-                        € {p.price.toLocaleString("it-IT")}
-                      </div>
-
-                      <a
-                        href={`/prodotto/${p.id}`}
-                        className="rounded-full bg-stone-950 px-4 py-2 text-sm font-medium text-white"
-                      >
-                        Scheda
-                      </a>
-                    </div>
-                  </div>
+                  <h3 className="text-2xl font-semibold text-[#2a1810]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 leading-7 text-[#5f4a3b]">{item.text}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
-
-        <section id="servizi" className="mx-auto max-w-7xl px-5 py-16">
-          <div className="mb-8">
-            <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
-              servizi
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
-              Dalla valutazione alla vendita
-            </h2>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
-            {services.map((item) => (
-              <div
-                key={item}
-                className="rounded-[1.5rem] border border-stone-200 bg-white p-6 shadow-sm"
-              >
-                <h3 className="text-xl font-semibold">{item}</h3>
-                <p className="mt-3 leading-7 text-stone-600">
-                  Servizio professionale per valorizzare oggetti, arredi e
-                  collezioni.
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="contovendita" className="bg-stone-950 py-16 text-white">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-amber-300">
-                contovendita
-              </p>
-              <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
-                Affida i tuoi oggetti a una vendita curata.
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-stone-300">
-                Gestiamo presentazione, catalogazione, promozione e trattativa
-                di vendita per mobili, lampade, quadri, libri e oggetti d’arte.
-              </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {["Invio foto", "Valutazione", "Pubblicazione", "Vendita"].map(
-                (step, index) => (
-                  <div
-                    key={step}
-                    className="rounded-[1.5rem] border border-white/10 bg-white/10 p-6"
-                  >
-                    <h3 className="text-xl font-semibold">
-                      {index + 1}. {step}
-                    </h3>
-                    <p className="mt-3 leading-7 text-stone-300">
-                      Procedura semplice, chiara e professionale.
-                    </p>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section id="contatti" className="bg-stone-100 py-16">
-          <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-2">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-amber-800">
-                contatti
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold md:text-5xl">
-                Hai un oggetto da vendere o vuoi una consulenza?
-              </h2>
-              <p className="mt-5 leading-8 text-stone-600">
-                Scrivici allegando foto, misure e una breve descrizione.
-              </p>
-            </div>
-
-            <form
-              className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                className="w-full rounded-2xl border border-stone-300 px-4 py-3"
-                placeholder="Nome e cognome"
-              />
-              <input
-                className="mt-4 w-full rounded-2xl border border-stone-300 px-4 py-3"
-                placeholder="Email o telefono"
-              />
-              <textarea
-                className="mt-4 min-h-32 w-full rounded-2xl border border-stone-300 px-4 py-3"
-                placeholder="Descrivi l'oggetto"
-              />
-              <button className="mt-4 rounded-full bg-stone-950 px-7 py-3 font-medium text-white">
-                Invia richiesta
-              </button>
-            </form>
-          </div>
-        </section>
       </main>
 
-      <footer className="border-t border-stone-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-4">
-          <div>
-            <div className="text-xl font-semibold">{CONTACT.brand}</div>
-            <p className="mt-3 text-stone-600">
-              Catalogo online, vendita, contovendita, restauro e consulenza.
+      <footer className="border-t border-[#d6c7ad] bg-[#fffaf0]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-[1.2fr_1fr_1fr]">
+          <div className="text-center">
+            <div className="text-xl font-semibold text-[#2a1810]">{CONTACT.brand}</div>
+            <p className="mt-3 text-[#5f4a3b]">
+              Catalogo online, vendita, contovendita e consulenza per ambienti
+              di raffinata eleganza senza tempo.
             </p>
           </div>
 
           <div>
-            <div className="font-semibold">Sezioni</div>
-            <div className="mt-3 grid gap-2 text-stone-600">
-              <span>Antiquariato</span>
-              <span>Modernariato</span>
-              <span>Illuminazione</span>
-              <span>Libreria</span>
+            <div className="font-semibold text-[#2a1810]">Sezioni</div>
+            <div className="mt-3 grid gap-2 text-[#5f4a3b] sm:grid-cols-2 md:grid-cols-1">
+              {areas.map((item) => (
+                <a
+                  key={item.title}
+                  href="#aree"
+                  className="hover:text-[#8a5527]"
+                >
+                  {item.title}
+                </a>
+              ))}
             </div>
           </div>
 
           <div>
-            <div className="font-semibold">Servizi</div>
-            <div className="mt-3 grid gap-2 text-stone-600">
-              <span>Acquisto diretto</span>
-              <span>Contovendita</span>
-              <span>Restauro</span>
-              <span>Perizie</span>
-            </div>
-          </div>
-
-          <div>
-            <div className="font-semibold">Contatti</div>
-            <div className="mt-3 grid gap-3 text-stone-600">
+            <div className="font-semibold text-[#2a1810]">Contatti</div>
+            <div className="mt-3 grid gap-3 text-[#5f4a3b]">
               <a
                 href="https://wa.me/393348069639"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-amber-800"
+                className="hover:text-[#8a5527]"
               >
-                WhatsApp: 334 806 9639
+                {CONTACT.phone}
               </a>
               <span>{CONTACT.email}</span>
               <span>{CONTACT.location}</span>
+              <a href="/privacy" className="hover:text-[#8a5527]">
+                Privacy
+              </a>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-stone-200 px-5 py-5 text-center text-sm text-stone-500">
+        <div className="border-t border-stone-200 px-5 py-5 text-center text-sm text-[#806c59]">
           © 2026 {CONTACT.brand}. Tutti i diritti riservati.
         </div>
       </footer>
