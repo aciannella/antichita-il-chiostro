@@ -32,9 +32,9 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: absoluteUrl("/d798ff87-db9f-400d-8e92-897ebfeb6713.png"),
-        width: 1138,
-        height: 1414,
+        url: absoluteUrl("/hero-antiquariato-reale.jpg"),
+        width: 3024,
+        height: 4032,
         alt: "Interno antiquario con arredi, dipinti, illuminazione e oggetti d'epoca",
       },
     ],
@@ -43,7 +43,7 @@ export const metadata = {
     card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: [absoluteUrl("/d798ff87-db9f-400d-8e92-897ebfeb6713.png")],
+    images: [absoluteUrl("/hero-antiquariato-reale.jpg")],
   },
   robots: {
     index: true,
